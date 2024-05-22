@@ -1,0 +1,4 @@
+curses
+requests
+tldextract
+dnspython
