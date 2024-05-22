@@ -13,7 +13,7 @@ Buna Subfind3r is a subdomain enumeration tool that uses crt.sh and DNSDumpster 
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/buna_subfind3r.git
+    git clone https://github.com/Befikadu-Tesfaye/buna_subfind3r.git
     ```
 2. Navigate to the project directory:
     ```bash
