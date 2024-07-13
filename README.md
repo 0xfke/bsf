@@ -26,15 +26,15 @@ Buna Subdomain Finder is a Python script designed to discover common subdomains 
     ```sh
      sudo mv buna_subfind3r.py /usr/bin/bsf
      chmod +x bsf
-3. **Run the script:**
+4. **Run the script:**
     ```sh
     bsf
     ```
 
-4. **Input the domain:**
+5. **Input the domain:**
     Enter the domain to find subdomains for (e.g., example.com)
 
-5. **Optional Output File:**
+6. **Optional Output File:**
     Enter the output file to save found subdomains (leave blank for no output file)
 
 ## Example
