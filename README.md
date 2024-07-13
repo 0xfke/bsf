@@ -59,8 +59,8 @@ Finding subdomains for example.com...
 [+] Found subdomain: http://www.example.com -> 93.184.216.34
 [+] Found subdomain: http://mail.example.com -> 93.184.216.34
 ...
-
-## License
+```
+#License
 MIT License
 
 Copyright (c) 2024 Befikadu Tesfaye
