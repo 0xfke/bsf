@@ -102,7 +102,7 @@ def find_subdomains(domain, output_file):
 def main():
     banner = """
     ____ _____ ______
-   / __ ) ___// ____/ youtube  @bunabye
+   / __ ) ___// ____/ youtube  @bunabyte
   / __  \__ \/ /_     facebook @BunaByte
  / /_/ /__/ / __/     telegram @hacker_habesha
 /_____/____/_/        linkedin @Befikadu-Tesfaye
