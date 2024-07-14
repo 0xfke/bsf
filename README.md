@@ -14,7 +14,7 @@ Buna Subdomain Finder is a Python script designed to discover common subdomains 
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/Befikadu-Tesfaye/bsf.git
+    git clone https://github.com/fike-sh/bsf.git
     cd bsf
     ```
 
