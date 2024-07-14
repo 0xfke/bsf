@@ -41,7 +41,7 @@ Buna Subdomain Finder is a Python script designed to discover common subdomains 
 
 ```sh
     ____ _____ ______
-   / __ ) ___// ____/ youtube  @bunabye
+   / __ ) ___// ____/ youtube  @bunabyte
   / __  \__ \/ /_     facebook @BunaByte
  / /_/ /__/ / __/     telegram @hacker_habesha
 /_____/____/_/        linkedin @Befikadu-Tesfaye
