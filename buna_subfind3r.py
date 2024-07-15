@@ -69,7 +69,7 @@ def find_subdomains(domain, output_file):
     found_subdomains = []
 
     def check_subdomain(subdomain):
-        url = f"http://{subdomain}.{domain}" 
+        url = f"https://{subdomain}.{domain}" 
         try:
             response = requests.get(url, timeout=60)
             if response.status_code == 200:
