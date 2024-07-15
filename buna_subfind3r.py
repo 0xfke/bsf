@@ -71,7 +71,7 @@ def find_subdomains(domain, output_file):
     def check_subdomain(subdomain):
         url = f"https://{subdomain}.{domain}" 
         try:
-            response = requests.get(url, timeout=60)
+            response = requests.get(url, timeout=30)
             if response.status_code == 200:
                 try:
                     ip_address = socket.gethostbyname(f"{subdomain}.{domain}")
