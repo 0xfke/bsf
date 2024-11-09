@@ -42,9 +42,9 @@ Buna Subdomain Finder is a Python script designed to discover common subdomains 
 ```sh
     ____ _____ ______
    / __ ) ___// ____/ youtube  @bunabyte
-  / __  \__ \/ /_     facebook @BunaByte
- / /_/ /__/ / __/     telegram @hacker_habesha
-/_____/____/_/        linkedin @Befikadu-Tesfaye
+  / __  \__ \/ /_     telegram @hacker_habesha
+ / /_/ /__/ / __/     
+/_____/____/_/        
 
  ____                      ____        _       _____ _           _           
 | __ ) _   _ _ __   __ _  / ___| _   _| |__   |  ___(_)_ __   __| | ___ _ __ 
@@ -52,7 +52,7 @@ Buna Subdomain Finder is a Python script designed to discover common subdomains 
 | |_) | |_| | | | | (_| |  ___) | |_| | |_) | |  _| | | | | | (_| |  __/ |   
 |____/ \__,_|_| |_|\__,_| |____/ \__,_|_.__/  |_|   |_|_| |_|\__,_|\___|_|   
   
-Befikadu's Security Framework - Ethical hacking and cybersecurity tools.
+Buna-Byte's Security Framework - Ethical hacking and cybersecurity tools.
 
     
 Enter the domain to find subdomains for (e.g., example.com): example.com
