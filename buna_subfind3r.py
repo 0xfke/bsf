@@ -3,64 +3,50 @@
 import requests
 import socket
 import threading
+import logging
+from concurrent.futures import ThreadPoolExecutor
+import re
+import sys
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # List of common subdomains to check
 common_subdomains = [
-    'www', 'mail', 'lms.courses', 'preview.lms', 'api.courses', 'lms', 'ftp', 'remote', 'webmail', 'server', 'ns1', 'ns2', 'blog', 'dev', 'shop', 'api', 'test',
-    'secure', 'admin', 'login', 'forum', 'portal', 'beta', 'stage', 'demo', 'vpn', 'mysql', 'mssql', 'pgsql',
-    'oracle', 'ldap', 'dns', 'proxy', 'backup', 'crm', 'files', 'download', 'upload', 'media', 'stats', 'status',
-    'ads', 'search', 'chat', 'imap', 'pop', 'smtp', 'mailserver', 'calendar', 'web', 'mobile', 'm', 'api', 'labs',
-    'app', 'apps', 'dashboard', 'control', 'panel', 'billing', 'payment', 'invoices', 'checkout', 'cart', 'oauth',
-    'auth', 'login', 'signup', 'subscribe', 'register', 'join', 'go', 'assets', 'img', 'images', 'pictures', 'photos',
-    'static', 'cdn', 'js', 'css', 'fonts', 'videos', 'blog', 'news', 'press', 'support', 'help', 'faq', 'contact',
-    'about', 'team', 'jobs', 'careers', 'clients', 'partners', 'terms', 'privacy', 'cookies', 'legal', 'info', 'news',
-    'updates', 'release', 'press', 'events', 'conference', 'summit', 'training', 'courses', 'academy', 'learn', 'docs',
-    'developer', 'partners', 'affiliate', 'investors', 'download', 'resources', 'marketplace', 'shop', 'store', 'ecommerce',
-    'forum', 'community', 'board', 'support', 'help', 'bug', 'issues', 'tickets', 'forums', 'feedback', 'suggestions',
-    'survey', 'wiki', 'knowledgebase', 'documentation', 'tools', 'api', 'integration', 'developer', 'sandbox', 'labs',
-    'research', 'whitepaper', 'books', 'library', 'archives', 'gallery', 'preview',  'projects', 'members', 'users', 'profile',
-    'account', 'settings', 'preferences', 'notifications', 'messages', 'inbox', 'outbox', 'chat', 'messages', 'chat',
-    'events', 'calendar', 'agenda', 'schedule', 'meetings', 'appointments', 'tasks', 'todo', 'notes', 'files', 'downloads',
-    'resources', 'assets', 'data', 'analytics', 'metrics', 'reports', 'dashboard', 'stats', 'statistics', 'trends', 'insights',
-    'analysis', 'monitor', 'tracker', 'log', 'logs', 'error', 'debug', 'audit', 'security', 'backup', 'archive', 'cron',
-    'automation', 'scripts', 'tools', 'utilities', 'services', 'service', 'business', 'enterprise', 'company', 'corp',
-    'foundation', 'association', 'partnership', 'alliance', 'division', 'team', 'department', 'projects', 'labs', 'research',
-    'innovation', 'engineering', 'technology', 'science', 'projects', 'products', 'innovation', 'development', 'developers',
-    'testers', 'qa', 'engineering', 'architecture', 'design', 'ux', 'ui', 'brand', 'marketing', 'promotion', 'branding',
-    'identity', 'awareness', 'media', 'press', 'release', 'blog', 'news', 'stories', 'events', 'partners', 'clients',
-    'customers', 'public', 'relations', 'affairs', 'publicity', 'campaign', 'ads', 'advertise', 'sponsorship', 'promotion',
-    'deals', 'offers', 'sale', 'buy', 'trade', 'commerce', 'market', 'shop', 'store', 'products', 'goods', 'items',
-    'shopping', 'cart', 'checkout', 'order', 'billing', 'payment', 'invoice', 'shipment', 'delivery', 'returns', 'refund',
-    'feedback', 'review', 'testimonials', 'ratings', 'scores', 'survey', 'poll', 'vote', 'opinion', 'feedback', 'customer',
-    'client', 'satisfaction', 'loyalty', 'support', 'help', 'faq', 'question', 'answer', 'support', 'service', 'helpdesk',
-    'support', 'tickets', 'issues', 'contact', 'contactus', 'feedback', 'inquiries', 'suggestions', 'complaints', 'problems',
-    'help', 'needhelp', 'assistance', 'emergency', 'alert', 'warning', 'info', 'announcements', 'updates', 'news', 'press',
-    'media', 'release', 'public', 'relations', 'about', 'info', 'company', 'corporate', 'team', 'ourteam', 'staff', 'ourstaff',
-    'career', 'jobs', 'work', 'hiring', 'joinus', 'vacancy', 'opportunity', 'resume', 'cv', 'application', 'submit', 'subscribe',
-    'register', 'signup', 'login', 'signin', 'logout', 'signout', 'myaccount', 'account', 'profile', 'settings', 'preferences',
-    'dashboard', 'panel', 'console', 'controlpanel', 'administration', 'management', 'backend', 'frontend', 'client', 'user',
-    'clients', 'users', 'members', 'customers', 'guest', 'guests', 'visitor', 'visitors', 'new', 'newuser', 'newmember',
-    'newcustomer', 'newclient', 'support', 'help', 'faq', 'terms', 'privacy', 'security', 'policy', 'tos', 'legal', 'copyright',
-    'disclaimer', 'warning', 'alert', 'notification', 'emergency', 'info', 'about', 'learn', 'explore', 'discover', 'tour', 'demo',
-    'download', 'get', 'access', 'try', 'buy', 'order', 'purchase', 'shop', 'store', 'blog', 'news', 'articles', 'guides', 'howto',
-    'tutorials', 'resources', 'documentation', 'faq', 'help', 'support', 'contact', 'forum', 'community', 'discuss', 'chat',
-    'talk', 'speak', 'connect', 'join', 'follow', 'subscribe', 'partners', 'affiliates', 'developers', 'api', 'integration',
-    'tools', 'platform', 'sdk', 'libraries', 'plugins', 'extensions', 'modules', 'components', 'projects', 'opensource',
-    'contribute', 'collaborate', 'donate', 'sponsor', 'about', 'company', 'team', 'vision', 'mission', 'values', 'goals', 'history',
-    'newsroom', 'events', 'clients', 'partners', 'investors', 'financials', 'reports', 'governance', 'leadership', 'board',
-    'contact', 'locations', 'career', 'jobs', 'opportunities', 'work', 'culture', 'life', 'benefits', 'diversity', 'inclusion',
-    'campus', 'university', 'students', 'graduates', 'alumni', 'research', 'innovation', 'labs', 'labs', 'projects', 'blogs',
-    'blog', 'news', 'media', 'events', 'press', 'release', 'support', 'help', 'faq', 'community', 'forum', 'contact', 'partners',
-    'affiliates', 'about', 'company', 'team', 'history', 'jobs', 'blog', 'news', 'events', 'support', 'contact', 'faq', 'privacy',
-    'policy', 'terms', 'conditions', 'security', 'responsible', 'disclosure', 'accessibility', 'help', 'support', 'contact',
-    'faq', 'community', 'forum', 'blog', 'news', 'press', 'release', 'events', 'partners', 'clients', 'investors', 'about',
-    'team', 'jobs', 'careers', 'contact', 'support', 'help', 'faq', 'blog', 'news', 'press', 'release', 'events', 'partners',
-    'about', 'team', 'careers', 'contact', 'investors', 'privacy', 'policy', 'terms', 'conditions', 'copyright', 'disclaimer',
-    'security', 'infosec', 'disclosure', 'gdpr', 'compliance', 'news', 'updates', 'press', 'release', 'events', 'newsletter',
-    'subscribe', 'privacy', 'policy', 'terms', 'conditions', 'gdpr', 'compliance', 'contact', 'support', 'help', 'faq', 'blog',
-    'news', 'press', 'release', 'events', 'partners', 'about', 'team', 'jobs', 'careers', 'investors', 'contact', 'support',
-    'help', 'faq', 'blog', 'news', 'press', 'release', 'events'
+    'www', 'mail', 'lms.courses', 'preview.lms', 'api.courses', 'lms', 'ftp', 'remote', 'webmail', 'server', 'ns1', 'ns2', 
+    'blog', 'dev', 'shop', 'api', 'test', 'secure', 'admin', 'login', 'forum', 'portal', 'beta', 'stage', 'demo', 'vpn', 
+    'mysql', 'mssql', 'pgsql', 'oracle', 'ldap', 'dns', 'proxy', 'backup', 'crm', 'files', 'download', 'upload', 'media', 
+    'stats', 'status', 'ads', 'search', 'chat', 'imap', 'pop', 'smtp', 'mailserver', 'calendar', 'web', 'mobile', 'm', 'labs',
+    'app', 'apps', 'dashboard', 'control', 'panel', 'billing', 'payment', 'invoices', 'checkout', 'cart', 'oauth', 'auth', 
+    'signup', 'assets', 'img', 'images', 'pictures', 'photos', 'static', 'cdn', 'js', 'css', 'fonts', 'videos', 'blog', 
+    'news', 'press', 'support', 'help', 'faq', 'contact', 'about', 'team', 'jobs', 'careers', 'clients', 'partners', 'terms',
+    'privacy', 'cookies', 'legal', 'info', 'updates', 'release', 'events', 'conference', 'summit', 'training', 'courses',
+    'academy', 'learn', 'docs', 'developer', 'partners', 'affiliate', 'investors', 'download', 'resources', 'marketplace',
+    'shop', 'store', 'ecommerce', 'community', 'board', 'feedback', 'survey', 'wiki', 'knowledgebase', 'documentation', 
+    'integration', 'sandbox', 'labs', 'research', 'whitepaper', 'books', 'library', 'archives', 'gallery', 'projects', 
+    'members', 'users', 'profile', 'account', 'settings', 'preferences', 'notifications', 'messages', 'inbox', 'outbox', 
+    'chat', 'calendar', 'agenda', 'schedule', 'meetings', 'appointments', 'tasks', 'todo', 'notes', 'files', 'downloads',
+    'analytics', 'metrics', 'reports', 'dashboard', 'stats', 'monitor', 'tracker', 'log', 'logs', 'error', 'debug', 'audit',
+    'security', 'cron', 'automation', 'scripts', 'utilities', 'services', 'business', 'enterprise', 'company', 'foundation', 
+    'association', 'alliance', 'division', 'department', 'team', 'projects', 'innovation', 'engineering', 'technology', 
+    'science', 'development', 'developers', 'testers', 'qa', 'architecture', 'design', 'ux', 'ui', 'brand', 'marketing', 
+    'promotion', 'sponsorship', 'deals', 'sale', 'buy', 'trade', 'commerce', 'shop', 'order', 'billing', 'payment', 'invoice',
+    'shipment', 'delivery', 'returns', 'refund', 'feedback', 'reviews', 'survey', 'poll', 'vote', 'opinion', 'support', 
+    'tickets', 'issues', 'complaints', 'helpdesk', 'emergency', 'alert', 'announcement', 'updates', 'press', 'release', 
+    'public', 'relations', 'about', 'company', 'staff', 'work', 'hiring', 'vacancy', 'opportunity', 'resume', 'cv', 'application',
+    'submit', 'register', 'login', 'signout', 'myaccount', 'profile', 'settings', 'preferences', 'dashboard', 'panel', 
+    'administration', 'management', 'backend', 'frontend', 'user', 'guests', 'visitor', 'newuser', 'newmember', 'newclient', 
+    'support', 'faq', 'terms', 'privacy', 'policy', 'tos', 'legal', 'disclaimer', 'help', 'contact', 'suggestions', 'inquiries', 
+    'emergency', 'alert', 'notification', 'sponsor', 'about', 'company', 'team', 'vision', 'mission', 'values', 'goals', 'history',
+    'jobs', 'career', 'opportunities', 'work', 'culture', 'benefits', 'diversity', 'campus', 'university', 'students', 
+    'graduates', 'alumni', 'innovation', 'labs', 'research', 'events', 'support', 'contact'
 ]
+
+# Validate domain input
+def validate_domain(domain):
+    if not re.match(r"^[a-zA-Z0-9.-]+$", domain):
+        print(f"Invalid domain format: {domain}")
+        sys.exit(1)
 
 # Lock for thread-safe printing
 print_lock = threading.Lock()
@@ -69,7 +55,7 @@ def find_subdomains(domain, output_file):
     found_subdomains = []
 
     def check_subdomain(subdomain):
-        url = f"https://{subdomain}.{domain}" 
+        url = f"https://{subdomain}.{domain}"
         try:
             response = requests.get(url, timeout=60)
             if response.status_code == 200:
@@ -79,18 +65,14 @@ def find_subdomains(domain, output_file):
                     ip_address = "Unable to resolve"
                 with print_lock:
                     found_subdomains.append((url, ip_address))
-                    print(f"[+] Found subdomain: {url} -> {ip_address}")
-        except requests.ConnectionError:
-            pass
+                    logging.info(f"[+] Found subdomain: {url} -> {ip_address}")
+        except requests.RequestException as e:
+            logging.debug(f"Error with {url}: {e}")
+        except socket.gaierror as e:
+            logging.debug(f"DNS resolution failed for {url}: {e}")
 
-    threads = []
-    for subdomain in common_subdomains:
-        thread = threading.Thread(target=check_subdomain, args=(subdomain,))
-        thread.start()
-        threads.append(thread)
-
-    for thread in threads:
-        thread.join()
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        executor.map(check_subdomain, common_subdomains)
 
     if output_file:
         with open(output_file, 'w') as f:
@@ -114,14 +96,14 @@ def main():
 |____/ \__,_|_| |_|\__,_| |____/ \__,_|_.__/  |_|   |_|_| |_|\__,_|\___|_|   
   
 Befikadu's Security Framework - Ethical hacking and cybersecurity tools.
-
     """
     print(banner)
 
     domain = input("Enter the domain to find subdomains for (e.g., example.com): ")
+    validate_domain(domain)
     output_file = input("Enter the output file to save found subdomains (leave blank for no output file): ")
 
-    print(f"Finding subdomains for {domain}...")
+    logging.info(f"Finding subdomains for {domain}...")
     subdomains = find_subdomains(domain, output_file)
     if subdomains:
         print("\nFound subdomains:")
@@ -131,8 +113,7 @@ Befikadu's Security Framework - Ethical hacking and cybersecurity tools.
                 print(f"{sub} -> {ip}")
                 printed_ips.add(ip)
     else:
-        print("No subdomains found.")
+        logging.info("No subdomains found.")
 
 if __name__ == "__main__":
     main()
-
